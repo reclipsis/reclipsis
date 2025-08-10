@@ -1,10 +1,9 @@
 # Reclipsis
 Eclipsis, but new!
 
-### Project structure
-`reclipsis-client` - client
-`reclipsis-server` - server
-`reclipsis-common` - shared gameplay logic
-`reclipsis-assets` - preloaded assets
-`reclipsis-protocol` - shared protocol
-`reclipsis-render` - rendering logic
+## Building from source
+First, clone the repository: `git clone https://github.com/reclipsis/reclipsis.git`
+
+Then use the following commands to run it:
+ - Client: `cargo run --bin reclipsis_client`
+ - Server: `cargo run --bin reclipsis_server`
