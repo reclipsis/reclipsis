@@ -1,0 +1,15 @@
+[package]
+name = "reclipsis_client"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bevy = { workspace = true }
+avian3d = { workspace = true }
+lightyear = { workspace = true }
+leafwing-input-manager = { workspace = true }
+
+reclipsis_common = { path = "../reclipsis_common" }
+reclipsis_assets = { path = "../reclipsis_assets" }
+tracing-subscriber = "0.3.19"
+bevy-inspector-egui = "0.32.0"

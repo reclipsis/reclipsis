@@ -1,0 +1,16 @@
+[workspace]
+members = ["reclipsis_assets", "reclipsis_client", "reclipsis_common", "reclipsis_server"]
+resolver = "3"
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[workspace.dependencies]
+bevy = { version = "0.16.1", features = ["dynamic_linking", "wayland"] }
+avian3d = { version = "0.3.1", features = ["serialize", "enhanced-determinism"] }
+lightyear = { git = "https://github.com/cbournhonesque/lightyear", features = ["netcode", "udp", "leafwing", "avian3d"] }
+serde = { version = "1.0" }
+leafwing-input-manager = "0.17.1"
