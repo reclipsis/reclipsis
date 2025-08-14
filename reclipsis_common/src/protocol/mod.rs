@@ -69,6 +69,7 @@ impl Plugin for ProtocolPlugin {
 pub enum CharacterAction {
     Move,
     Jump,
+    Rotate,
 }
 
 impl Actionlike for CharacterAction {
@@ -76,6 +77,7 @@ impl Actionlike for CharacterAction {
         match self {
             Self::Move => InputControlKind::DualAxis,
             Self::Jump => InputControlKind::Button,
+            Self::Rotate => InputControlKind::Axis,
         }
     }
 }
