@@ -28,7 +28,7 @@ pub struct CharacterQuery {
     pub external_impulse: &'static mut ExternalImpulse,
     pub linear_velocity: &'static LinearVelocity,
     pub mass: &'static ComputedMass,
-    pub position: &'static Position,
+    pub transform: &'static mut Transform,
     pub entity: Entity,
 }
 
@@ -44,7 +44,7 @@ pub fn apply_character_action(
     let max_velocity_delta_per_tick = MAX_ACCELERATION * time.delta_secs();
 
     if action_state.just_pressed(&CharacterAction::Jump) {
-        let ray_cast_origin = character.position.0
+        let ray_cast_origin = character.transform.translation
             + Vec3::new(
                 0.0,
                 -character::CHARACTER_CAPSULE_HEIGHT / 2.0 - character::CHARACTER_CAPSULE_RADIUS,
@@ -67,10 +67,18 @@ pub fn apply_character_action(
         }
     }
 
+    // Rotate character
+    let rotate_dir = action_state
+        .value(&CharacterAction::Rotate);
+    character.transform.rotation = Quat::from_rotation_y(rotate_dir);
+
+    // Move character
     let move_dir = action_state
         .axis_pair(&CharacterAction::Move)
         .clamp_length_max(1.0);
-    let move_dir = Vec3::new(-move_dir.x, 0.0, move_dir.y);
+    let move_dir = Vec3::new(move_dir.x, 0.0, -move_dir.y);
+
+    let local_move_dir = character.transform.rotation * move_dir;
 
     let ground_linear_velocity = Vec3::new(
         character.linear_velocity.x,
@@ -78,7 +86,7 @@ pub fn apply_character_action(
         character.linear_velocity.z,
     );
 
-    let desired_ground_linear_velocity = move_dir * MAX_SPEED;
+    let desired_ground_linear_velocity = local_move_dir * MAX_SPEED;
 
     let new_ground_linear_velocity = ground_linear_velocity
         .move_towards(desired_ground_linear_velocity, max_velocity_delta_per_tick);
