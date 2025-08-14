@@ -6,14 +6,32 @@ use lightyear::prelude::{input::leafwing::SnapshotBuffer, *};
 use reclipsis_assets::*;
 use reclipsis_common::{protocol::*, *};
 
+use crate::AppState;
+
+mod camera;
+
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, SubStates)]
+#[source(AppState = AppState::Game)]
+enum SpawnedState {
+    Spawned,
+    #[default]
+    NotSpawned,
+}
+
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(FixedUpdate, handle_character_actions)
+        app.add_sub_state::<SpawnedState>()
+            .add_plugins(camera::CameraPlugin)
+            .add_systems(
+                FixedUpdate,
+                handle_character_actions.run_if(in_state(AppState::Game)),
+            )
             .add_systems(
                 Update,
-                (handle_new_character, handle_new_floor, handle_new_block),
+                (handle_new_character, handle_new_floor, handle_new_block)
+                    .run_if(in_state(AppState::Game)),
             );
     }
 }
@@ -52,18 +70,23 @@ fn handle_new_character(
         (Entity, Has<Controlled>),
         (Added<Predicted>, With<character::CharacterMarker>),
     >,
+    mut next_state: ResMut<NextState<SpawnedState>>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     for (entity, is_controlled) in &mut character_query {
         if is_controlled {
             info!("Adding InputMap to controlled and predicted entity {entity:?}");
+
+            // Add InputMap
             commands.entity(entity).insert(
                 InputMap::new([(CharacterAction::Jump, KeyCode::Space)])
                     .with(CharacterAction::Jump, GamepadButton::South)
                     .with_dual_axis(CharacterAction::Move, GamepadStick::LEFT)
                     .with_dual_axis(CharacterAction::Move, VirtualDPad::wasd()),
             );
+
+            next_state.set(SpawnedState::Spawned);
         } else {
             info!("Remote character predicted for us: {entity:?}");
         }

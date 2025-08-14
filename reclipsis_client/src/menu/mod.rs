@@ -14,7 +14,7 @@ impl Plugin for MenuPlugin {
     }
 }
 
-fn debug_connect(mut commands: Commands) {
+fn debug_connect(mut commands: Commands, mut next_state: ResMut<NextState<AppState>>) {
     let client_addr = "127.0.0.1:1337".parse().unwrap();
     let server_addr = "127.0.0.1:8080".parse().unwrap();
 
@@ -38,4 +38,6 @@ fn debug_connect(mut commands: Commands) {
         ))
         .id();
     commands.trigger_targets(Connect, client);
+
+    next_state.set(AppState::Game);
 }
