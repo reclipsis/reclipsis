@@ -117,7 +117,9 @@ pub fn orbit(
     }
 
     camera.translation = character.transform.translation - camera.forward() * local_orbit_distance;
-    camera_yaw.0 = Some(yaw);
+    if delta_yaw != 0.0 {
+        camera_yaw.0 = Some(yaw);
+    }
 }
 
 fn update_character_rotation(
