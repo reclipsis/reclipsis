@@ -1,7 +1,7 @@
 use avian3d::prelude::*;
 use bevy::{ecs::query::QueryData, prelude::*};
 use leafwing_input_manager::prelude::*;
-use reclipsis_assets::character;
+use reclipsis_assets::{character, inventory};
 
 use crate::protocol::CharacterAction;
 
@@ -30,6 +30,7 @@ pub struct CharacterQuery {
     pub mass: &'static ComputedMass,
     pub transform: &'static mut Transform,
     pub entity: Entity,
+    pub inventory: &'static mut inventory::Inventory,
 }
 
 pub fn apply_character_action(
@@ -68,8 +69,7 @@ pub fn apply_character_action(
     }
 
     // Rotate character
-    let rotate_dir = action_state
-        .value(&CharacterAction::Rotate);
+    let rotate_dir = action_state.value(&CharacterAction::Rotate);
     character.transform.rotation = Quat::from_rotation_y(rotate_dir);
 
     // Move character
@@ -97,4 +97,19 @@ pub fn apply_character_action(
     character
         .external_force
         .apply_force(required_acceleration * character.mass.value());
+
+    // Equip item
+    let slot = action_state
+        .value(&CharacterAction::Equip)
+        .round()
+        .clamp(0.0, 9.0) as u8;
+
+    match slot {
+        0 => character.inventory.equipped_item = None,
+        _ => {
+            if let Some(item) = character.inventory.inventory.get(&slot) {
+                character.inventory.equipped_item = Some(*item);
+            }
+        }
+    }
 }

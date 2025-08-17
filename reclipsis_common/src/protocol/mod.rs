@@ -1,7 +1,10 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
-use lightyear::{input::config::InputConfig, prelude::{input::leafwing::InputPlugin, *}};
+use lightyear::{
+    input::config::InputConfig,
+    prelude::{input::leafwing::InputPlugin, *},
+};
 use serde::{Deserialize, Serialize};
 
 use reclipsis_assets::*;
@@ -31,6 +34,9 @@ impl Plugin for ProtocolPlugin {
 
         app.register_component::<block::BlockMarker>()
             .add_prediction(PredictionMode::Once);
+
+        app.register_component::<inventory::Inventory>()
+            .add_prediction(PredictionMode::Simple);
 
         //
         // Physics
@@ -67,17 +73,23 @@ impl Plugin for ProtocolPlugin {
 
 #[derive(Serialize, Deserialize, Debug, Reflect, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum CharacterAction {
+    // Movement
     Move,
-    Jump,
     Rotate,
+    Jump,
+
+    // Inventory
+    Equip,
 }
 
 impl Actionlike for CharacterAction {
     fn input_control_kind(&self) -> InputControlKind {
         match self {
             Self::Move => InputControlKind::DualAxis,
-            Self::Jump => InputControlKind::Button,
             Self::Rotate => InputControlKind::Axis,
+            Self::Jump => InputControlKind::Button,
+
+            Self::Equip => InputControlKind::Axis,
         }
     }
 }

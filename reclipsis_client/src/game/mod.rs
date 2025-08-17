@@ -9,6 +9,7 @@ use reclipsis_common::{protocol::*, *};
 use crate::AppState;
 
 mod camera;
+mod item;
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, SubStates)]
 #[source(AppState = AppState::Game)]
@@ -23,7 +24,7 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_sub_state::<SpawnedState>()
-            .add_plugins(camera::CameraPlugin)
+            .add_plugins((camera::CameraPlugin, item::ItemPlugin))
             .add_systems(
                 FixedUpdate,
                 handle_character_actions.run_if(in_state(AppState::Game)),

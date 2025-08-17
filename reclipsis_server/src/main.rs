@@ -95,6 +95,7 @@ fn handle_connected(
             },
             character::CharacterPhysicsBundle::default(),
             character::CharacterMarker,
+            inventory::Inventory::default(),
         ))
         .id();
 
