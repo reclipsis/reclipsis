@@ -103,17 +103,17 @@ pub fn orbit(
 
     // If the camera collides with something, move it closer
     let mut local_orbit_distance = orbit_distance.0;
-    if let Ok(dir) = Dir3::new(camera.translation - character.transform.translation) {
-        if let Some(hit) = spatial_query.cast_shape(
+    if let Ok(dir) = Dir3::new(camera.translation - character.transform.translation)
+        && let Some(hit) = spatial_query.cast_shape(
             &Collider::sphere(0.1),
             character.transform.translation,
             Quat::default(),
             dir,
             &ShapeCastConfig::from_max_distance(orbit_distance.0),
             &SpatialQueryFilter::default().with_excluded_entities(vec![character.entity]),
-        ) {
-            local_orbit_distance = hit.distance;
-        }
+        )
+    {
+        local_orbit_distance = hit.distance;
     }
 
     camera.translation = character.transform.translation - camera.forward() * local_orbit_distance;
