@@ -9,7 +9,7 @@ opt-level = 1
 opt-level = 3
 
 [workspace.dependencies]
-bevy = { version = "0.16.1", features = ["dynamic_linking", "wayland"] }
+bevy = { version = "0.16.1", features = ["wayland"] }
 avian3d = { version = "0.3.1", features = ["serialize", "enhanced-determinism"] }
 lightyear = { git = "https://github.com/cbournhonesque/lightyear", features = ["netcode", "udp", "leafwing", "avian3d"] }
 serde = { version = "1.0" }
